@@ -1,0 +1,72 @@
+<template>
+  <div class="main">
+    <div style="width: 100%;margin-bottom: 20px;margin-top: 0px">
+      <text style="width:100%;" @click="chooseOne()">select subway</text>
+    </div>
+    <scroll style="flex-direction: column;width: 100%;flex: 1" scroll-y="{{true}}" scroll-x="{{true}}" bounces="{{true}}">
+      <image if={{list[selected]}} src="{{list[selected]}}"></image>
+      <text else>Loading...</text>
+    </scroll>
+  </div>
+</template>
+
+<script>
+import router from "@system.router"
+import fetch from '@system.fetch'
+import storage from '@system.storage' 
+
+export default {
+  private: {
+    selected: "seoul",
+    list: {},
+  },
+  onReady() {
+    const self = this
+    fetch.fetch({
+      url: 'https://notion-api.splitbee.io/v1/table/1658de6c3342801c9b18d7a73dff1369',
+      method: 'GET',
+      success: function (response) {
+        console.log(`response:`, response.data[0])
+        self.list = response.data[0]
+      },
+      fail: function (data, code) {
+        console.log(`handling fail, errMsg = ${data}`)
+      }
+    });
+    
+  },
+  onShow() {
+    const self = this
+    storage.get({
+      key: 'selectedSubway',
+      success: function(getData) {
+        console.log("getData1 : ", getData)
+        if(!getData) getData = 'gwangju'
+        self.selected = getData
+      },
+      fail: function(getData, code) {
+        console.log(`getData fail, code = ${code}`)
+      }
+    })
+  },
+  chooseOne() {
+    router.push({uri: "/pages/choose"})
+  }
+}
+</script>
+
+<style>
+.main {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding:20px 30px 40px ;
+  background-color: black;
+}
+
+text {
+  color: white;
+}
+</style>
