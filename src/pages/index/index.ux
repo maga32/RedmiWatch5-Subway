@@ -1,7 +1,9 @@
 <template>
   <div class="main">
     <div style="width: 100%;margin-bottom: 20px;margin-top: 0px">
-      <text style="width:100%;" @click="chooseOne()">select subway</text>
+      <text class="font-40" style="width:20%; padding-left: 10px;" @click="chooseOne()">@</text>
+      <text class="font-40" style="flex: 1; text-align: center">Subway</text>
+      <text class="font-40" style="width:20%; padding-right: 10px; text-align: center;" @click="developer()">i</text>
     </div>
     <scroll style="flex-direction: column;width: 100%;flex: 1" scroll-y="{{true}}" scroll-x="{{true}}" bounces="{{true}}">
       <image if={{list[selected]}} src="{{list[selected]}}"></image>
@@ -26,8 +28,10 @@ export default {
       url: 'https://notion-api.splitbee.io/v1/table/1658de6c3342801c9b18d7a73dff1369',
       method: 'GET',
       success: function (response) {
-        console.log(`response:`, response.data[0])
-        self.list = response.data[0]
+        console.log(`response:`, response.data)
+        response.data.forEach(li=>{
+          self.list[li.name] = li.link
+        })
       },
       fail: function (data, code) {
         console.log(`handling fail, errMsg = ${data}`)
@@ -40,33 +44,24 @@ export default {
     storage.get({
       key: 'selectedSubway',
       success: function(getData) {
-        console.log("getData1 : ", getData)
-        if(!getData) getData = 'gwangju'
+        console.log("getData success : ", getData)
+        if(!getData) getData = 'seoul'
         self.selected = getData
       },
       fail: function(getData, code) {
-        console.log(`getData fail, code = ${code}`)
+        console.log("getData fail", getData)
       }
     })
   },
   chooseOne() {
     router.push({uri: "/pages/choose"})
-  }
+  },
+  developer() {
+    router.push({uri: "/pages/developer"})
+  },
 }
 </script>
 
 <style>
-.main {
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  padding:20px 30px 40px ;
-  background-color: black;
-}
-
-text {
-  color: white;
-}
+  @import '../../common/common.css';
 </style>

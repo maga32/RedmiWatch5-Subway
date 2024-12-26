@@ -1,27 +1,66 @@
 <template>
-  <!-- template里只能有一个根节点 -->
-  <div class="demo-page">
-    <text class="title">{{text}}</text>
+  <div class="main">
+    <div style="width: 100%;margin-bottom: 20px;margin-top: 0px">
+      <text class="font-40" style="width:20%; text-align: center" @click="back()">&lt;</text>
+      <text class="font-40" style="flex: 1; text-align: center">Subway</text>
+      <text style="width:20%"></text>
+    </div>
+    <scroll style="flex-direction: column;width: 100%;flex: 1" scroll-y="{{true}}">
+      <div if="{{list.length===0}}">
+        <text style="width: 100%;margin-top: 100px;text-align: center">list is empty</text>
+      </div>
+      <div else class="item" for="li in list" @click="selectSubway(li)">
+        <text>{{li}}</text>
+      </div>
+    </scroll>
+    
   </div>
 </template>
 
 <script>
+import router from "@system.router"
+import fetch from '@system.fetch'
+import storage from '@system.storage' 
+
 export default {
   private: {
-    text: '欢迎打开详情页'
-  }
+    list: [],
+  },
+  onShow() {
+    const self = this
+    fetch.fetch({
+      url: 'https://notion-api.splitbee.io/v1/table/1658de6c3342801c9b18d7a73dff1369',
+      method: 'GET',
+      success: function (response) {
+        console.log('response:', response.data)
+        response.data.forEach((li)=>{
+          self.list.push(li.name)
+        })
+      },
+      fail: function (data, code) {
+        console.log(`handling fail, errMsg = ${data}`)
+      }
+    });
+  },
+  selectSubway(item) {
+    storage.set({
+      key: 'selectedSubway',
+      value: item,
+      success: function(setData) {
+        console.log('setData success!!! ', setData)
+        router.back()
+      },
+      fail: function(setData, code) {
+        console.log(`setData fail, code = ${code}`)
+      }
+    })
+  },
+  back() {
+    router.back()
+  },
 }
 </script>
 
 <style>
-  .demo-page {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .title {
-    font-size: 40px;
-    text-align: center;
-  }
+  @import '../../common/common.css';
 </style>
