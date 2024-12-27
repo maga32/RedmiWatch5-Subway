@@ -1,12 +1,14 @@
 <template>
   <div class="main">
     <div style="width: 100%;margin-bottom: 20px;margin-top: 0px">
-      <text class="font-40" style="width:20%; padding-left: 10px;" @click="chooseOne()">@</text>
-      <text class="font-40" style="flex: 1; text-align: center">Subway</text>
-      <text class="font-40" style="width:20%; padding-right: 10px; text-align: center;" @click="developer()">i</text>
+      <text class="font-40" style="width:10%; padding-left: 10px;" @click="chooseOne()">@</text>
+      <text class="font-40" style="width:20%; padding-left: 10px; text-align: center;" @click="zoomSize(0.9)">-</text>
+      <text class="font-30" style="flex: 1; text-align: center" @click="zoomReset()">Subway</text>
+      <text class="font-40" style="width:20%; padding-right: 10px; text-align: center;" @click="zoomSize(1.1)">+</text>
+      <text class="font-40" style="width:10%; padding-right: 10px; text-align: center;" @click="developer()">i</text>
     </div>
     <scroll style="flex-direction: column;width: 100%;flex: 1" scroll-y="{{true}}" scroll-x="{{true}}" bounces="{{true}}">
-      <image if={{list[selected]}} src="{{list[selected]}}"></image>
+      <image if={{list[selected]}} src="{{list[selected]}}" @complete="imgLoaded" style="width: {{imgWidth * imgRatio}}px; height: {{imgHeight * imgRatio}}px"></image>
       <text else>Loading...</text>
     </scroll>
   </div>
@@ -21,6 +23,9 @@ export default {
   private: {
     selected: "seoul",
     list: {},
+    imgRatio: 1,
+    imgWidth: 300,
+    imgHeight: 300,
   },
   onReady() {
     const self = this
@@ -36,8 +41,7 @@ export default {
       fail: function (data, code) {
         console.log(`handling fail, errMsg = ${data}`)
       }
-    });
-    
+    })
   },
   onShow() {
     const self = this
@@ -50,6 +54,43 @@ export default {
       },
       fail: function(getData, code) {
         console.log("getData fail", getData)
+      }
+    })
+
+    storage.get({
+      key: 'zoomSubway',
+      success: function(getData) {
+        console.log("getData success : ", getData)
+        if(!getData) getData = 1
+        self.imgRatio = getData
+      },
+      fail: function(getData, code) {
+        console.log("getData fail", getData)
+      }
+    })
+  },
+  imgLoaded(size) {
+    this.imgWidth = size.width
+    this.imgHeight = size.height
+  },
+  zoomSize(ratio) {
+    this.imgRatio *= ratio
+    this.saveRatio()
+  },
+  zoomReset() {
+    this.imgRatio = 1
+    this.saveRatio()
+  },
+  saveRatio() {
+    const self = this
+    storage.set({
+      key: 'zoomSubway',
+      value: self.imgRatio + "",
+      success: function(setData) {
+        console.log('setData success!!! ', setData)
+      },
+      fail: function(setData, code) {
+        console.log(`setData fail, code = ${code}`)
       }
     })
   },

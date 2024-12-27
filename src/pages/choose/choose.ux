@@ -48,6 +48,18 @@ export default {
       value: item,
       success: function(setData) {
         console.log('setData success!!! ', setData)
+
+        storage.set({
+          key: 'zoomSubway',
+          value: "1",
+          success: function(setData2) {
+            console.log('setData2 success!!! ', setData2)
+          },
+          fail: function(setData2, code2) {
+            console.log(`setData2 fail, code = ${code2}`)
+          }
+        })
+        
         router.back()
       },
       fail: function(setData, code) {

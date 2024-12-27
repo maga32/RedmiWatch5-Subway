@@ -35,7 +35,7 @@
 
 ###
 ###
-## 4. 기타정보
+## 3. 기타정보
 - 데이터베이스는 notion페이지를 db로 사용하였습니다. https://maga32.notion.site/RW5-Subway-1658de6c3342808ba9fecc4ef6407901
 - 이미지파일에 관련된 문제가 있다면 연락주시기 바랍니다.
 - 위 앱은 샤오미 vela 프레임워크로 개발되었습니다 : https://iot.mi.com/vela/quickapp
